@@ -1,26 +1,25 @@
 <?php
-//include: error op de pagina,php genereert een waarschuwing,
-//maar: de pagina zal wel verder uitgevoerd worden.
-//require: hetzelfde als include: php genereert een fatale fout
-//en stop de pagina van uitvoering
-//include_once
-//require_once
-include("includes/header.php");
-if(!$session->is_signed_in()){
-    header("location:login.php");
+require_once 'admin/includes/Photo.php';
+
+// Een instantie maken van de Photo-klasse om foto's te beheren
+$photo = new Photo();
+
+// Controleren of er een afbeelding is geüpload
+if (isset($_FILES['image'])) {
+    $photo->upload($_FILES['image']); // Methode om de afbeelding naar de server te uploaden
 }
-//$message = "";
-//$photo = new Photo();
-//if(isset($_POST['submit'])){
-//    $photo->title = $_POST['title'];
-//    $photo->description = $_POST['description'];
-//    $photo->set_file($_FILES['file']);
-//}
-//if($photo->save()){
-//    $message = "Foto succesvol opgeladen!";
-//}else{
-//    $message = join("<br>", $photo->errors);
-//}
+
+// Foto's ophalen uit de database
+$photos = $photo->find_all();
+
+// HTML-generatie voor de foto's
+foreach ($photos as $photo) {
+    $imagePath = 'uploads/' . $photo->filename;
+    echo '<div class="image-wrapper">';
+    echo '<img src="' . $imagePath . '" alt="' . $photo->alt . '">';
+    echo '</div>';
+}
+?>
 
 include("includes/sidebar.php");
 include("includes/content-top.php");
